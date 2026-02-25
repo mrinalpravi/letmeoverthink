@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let Me Overthink - Stop the mental spiral</title>
+    <meta name="description" content="AI-powered mental clarity. Dump your thoughts, get clear action.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #131316;
+            --bg-card: #1a1a1f;
+            --border: #2a2a30;
+            --text-primary: #fafafa;
+            --text-secondary: #a0a0a5;
+            --text-muted: #606065;
+            --accent-green: #22c55e;
+            --accent-green-bg: rgba(34, 197, 94, 0.1);
+            --accent-blue: #3b82f6;
+            --accent-blue-bg: rgba(59, 130, 246, 0.1);
+            --accent-purple: #a855f7;
+            --accent-purple-bg: rgba(168, 85, 247, 0.1);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Background pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(147, 51, 234, 0.1), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .header-tagline {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 24px;
+        }
+
+        .container {
+            max-width: 560px;
+            width: 100%;
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #fff, #a0a0a5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Input card */
+        .input-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .input-label svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-muted);
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #505060;
+            box-shadow: 0 0 0 3px rgba(120, 119, 198, 0.1);
+        }
+
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .char-count {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        button {
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gradient-1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Loading state */
+        #step-loading {
+            display: none;
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .loader-container {
+            margin-bottom: 24px;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-subtext {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Result state */
+        #step-result {
+            display: none;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.5rem;
+        }
+
+        .result-icon.do_it_now {
+            background: var(--accent-green-bg);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .result-icon.schedule_it {
+            background: var(--accent-blue-bg);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .result-icon.let_it_go {
+            background: var(--accent-purple-bg);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .result-title.do_it_now { color: var(--accent-green); }
+        .result-title.schedule_it { color: var(--accent-blue); }
+        .result-title.let_it_go { color: var(--accent-purple); }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .result-section {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-section:last-child {
+            border-bottom: none;
+        }
+
+        .result-section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .result-section-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-section-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--text-muted);
+        }
+
+        .result-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .result-text {
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .result-summary {
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .result-next-step {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 3px solid;
+        }
+
+        .result-next-step.do_it_now { border-left-color: var(--accent-green); }
+        .result-next-step.schedule_it { border-left-color: var(--accent-blue); }
+        .result-next-step.let_it_go { border-left-color: var(--accent-purple); }
+
+        .btn-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 14px 24px;
+            border-radius: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: #404050;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            padding: 20px 24px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Error toast */
+        .error-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #dc2626;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            max-width: calc(100% - 48px);
+        }
+
+        .error-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .error-toast svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .input-card {
+                padding: 20px;
+            }
+
+            textarea {
+                height: 140px;
+            }
+
+            .header-tagline {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <div class="app">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+                <span>Let Me Overthink</span>
+            </div>
+            <span class="header-tagline">Mental clarity, instantly</span>
+        </header>
+
+        <main>
+            <div class="container">
+                <!-- Step 1: Input -->
+                <div id="step-dump">
+                    <div class="hero">
+                        <div class="hero-badge">
+                            <span class="hero-badge-dot"></span>
+                            AI-powered clarity
+                        </div>
+                        <h1>Stop the mental spiral</h1>
+                        <p>Dump your thoughts. Get one clear action. Move forward.</p>
+                    </div>
+
+                    <div class="input-card">
+                        <div class="input-label">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                            </svg>
+                            What's on your mind?
+                        </div>
+                        <textarea
+                            id="thought-input"
+                            placeholder="What decision is stuck? What are you worrying about? What keeps circling in your head? Just write it all out..."
+                        ></textarea>
+                        <div class="input-footer">
+                            <span class="char-count"><span id="char-count">0</span> characters</span>
+                            <button class="btn-primary" id="overthink-btn" disabled>
+                                <span>Get clarity</span>
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading state -->
+                <div id="step-loading">
+                    <div class="loader-container">
+                        <div class="loader"></div>
+                    </div>
+                    <p class="loading-text">Analyzing your thoughts...</p>
+                    <p class="loading-subtext">Finding the signal in the noise</p>
+                </div>
+
+                <!-- Step 2: Result -->
+                <div id="step-result">
+                    <div class="result-header">
+                        <div class="result-icon" id="result-icon-container">
+                            <span id="result-emoji"></span>
+                        </div>
+                        <h2 class="result-title" id="result-title"></h2>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-section">
+                            <div class="result-section-header">
+                                <div class="result-section-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                                    </svg>
+                                </div>
+                                <span class="result-label">What you're really saying</span>
+                            </div>
+                            <div class="result-text result-summary" id="result-summary"></div>
+                        </div>
+
+                        <div class="result-section">
+                            <div class="result-section-header">
+                                <div class="result-section-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                    </svg>
+                                </div>
+                                <span class="result-label">Why this action</span>
+                            </div>
+                            <div class="result-text" id="result-reason"></div>
+                        </div>
+
+                        <div class="result-section" id="next-step-section">
+                            <div class="result-section-header">
+                                <div class="result-section-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                                    </svg>
+                                </div>
+                                <span class="result-label">Your next step</span>
+                            </div>
+                            <div class="result-next-step" id="result-next-step-container">
+                                <div class="result-text" id="result-next-step"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-secondary" id="reset-btn">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                        </svg>
+                        <span>Clear my head again</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p class="footer-text">Powered by AI. Your thoughts stay private.</p>
+        </footer>
+    </div>
+
+    <script>
+        const stepDump = document.getElementById('step-dump');
+        const stepLoading = document.getElementById('step-loading');
+        const stepResult = document.getElementById('step-result');
+        const thoughtInput = document.getElementById('thought-input');
+        const overthinkBtn = document.getElementById('overthink-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const charCount = document.getElementById('char-count');
+
+        // Character count and button state
+        thoughtInput.addEventListener('input', () => {
+            const length = thoughtInput.value.length;
+            charCount.textContent = length;
+            overthinkBtn.disabled = thoughtInput.value.trim().length < 10;
+        });
+
+        // Submit thought for analysis
+        overthinkBtn.addEventListener('click', async () => {
+            const thought = thoughtInput.value.trim();
+            if (thought.length < 10) return;
+
+            // Show loading
+            stepDump.style.display = 'none';
+            stepLoading.style.display = 'block';
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ thought })
+                });
+
+                const result = await response.json();
+
+                // Handle errors (rate limit, validation, etc.)
+                if (!response.ok || result.error) {
+                    stepLoading.style.display = 'none';
+                    stepDump.style.display = 'block';
+                    showError(result.error || 'Something went wrong. Please try again.');
+                    return;
+                }
+
+                const action = result.action;
+
+                // Update result icon
+                const iconContainer = document.getElementById('result-icon-container');
+                iconContainer.className = 'result-icon ' + action;
+                document.getElementById('result-emoji').textContent = result.emoji;
+
+                // Update title
+                const titleEl = document.getElementById('result-title');
+                titleEl.textContent = result.title;
+                titleEl.className = 'result-title ' + action;
+
+                // Update content
+                document.getElementById('result-summary').textContent = result.summary;
+                document.getElementById('result-reason').textContent = result.reason;
+
+                // Update next step
+                const nextStepSection = document.getElementById('next-step-section');
+                const nextStepContainer = document.getElementById('result-next-step-container');
+                const nextStepText = document.getElementById('result-next-step');
+
+                if (result.next_step) {
+                    nextStepText.textContent = result.next_step;
+                    nextStepContainer.className = 'result-next-step ' + action;
+                    nextStepSection.style.display = 'block';
+                } else {
+                    nextStepSection.style.display = 'none';
+                }
+
+                // Show result
+                stepLoading.style.display = 'none';
+                stepResult.style.display = 'block';
+                stepResult.classList.add('fade-in');
+
+            } catch (error) {
+                console.error('Error:', error);
+                stepLoading.style.display = 'none';
+                stepDump.style.display = 'block';
+                showError('Connection error. Please check your internet and try again.');
+            }
+        });
+
+        // Reset
+        resetBtn.addEventListener('click', () => {
+            thoughtInput.value = '';
+            charCount.textContent = '0';
+            overthinkBtn.disabled = true;
+
+            stepResult.style.display = 'none';
+            stepResult.classList.remove('fade-in');
+            stepDump.style.display = 'block';
+            stepDump.classList.add('fade-in');
+
+            thoughtInput.focus();
+        });
+
+        // Error toast
+        function showError(message) {
+            // Remove existing toast if any
+            const existing = document.querySelector('.error-toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'error-toast';
+            toast.innerHTML = `
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+
+            // Trigger animation
+            requestAnimationFrame(() => toast.classList.add('show'));
+
+            // Auto dismiss after 5s
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Focus textarea on load
+        thoughtInput.focus();
+    </script>
+</body>
+</html>
