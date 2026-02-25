@@ -62,11 +62,7 @@ class BedrockClient:
         self._total_requests += 1
         request_id = self._total_requests
 
-        logger.info("=" * 50)
         logger.info(f"REQUEST #{request_id}")
-        logger.info("=" * 50)
-        logger.info(f"Input: {thought[:100]}{'...' if len(thought) > 100 else ''}")
-        logger.info(f"Input length: {len(thought)} chars")
 
         try:
             return self._call_bedrock(thought, request_id)
@@ -116,8 +112,6 @@ class BedrockClient:
 
         # Extract and parse result
         result_text = response["output"]["message"]["content"][0]["text"]
-        logger.info(f"Raw output ({len(result_text)} chars):")
-        logger.info(f"  {result_text}")
 
         # Log stop reason if available
         if "stopReason" in response:
@@ -125,8 +119,6 @@ class BedrockClient:
 
         parsed_result = self._parse_response(result_text)
         parsed_result["tokens_used"] = metrics.total_tokens
-        logger.info(f"Parsed action: {parsed_result['action'].upper()}")
-        logger.info("=" * 50)
 
         return parsed_result
 

@@ -39,7 +39,6 @@ def analyze():
         logger.warning("Empty thought received")
         return jsonify({"error": "No thought provided"}), 400
 
-    logger.info(f"Received thought for analysis: {thought[:50]}...")
     result = bedrock.analyze_thought(thought)
 
     # Record token usage for rate limiting
