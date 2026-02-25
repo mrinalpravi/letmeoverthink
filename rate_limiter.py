@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 REQUESTS_PER_MINUTE = 10
-TOKENS_PER_HOUR = 5000
+TOKENS_PER_HOUR = 10000
 MAX_INPUT_LENGTH = 2000  # characters
 
 
